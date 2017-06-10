@@ -1,3 +1,4 @@
+import os
 import socket
 import network
 import websocket_helper
@@ -64,12 +65,13 @@ class WebSocketServer:
 
     def _serve_page(self, sock):
         try:
-            sock.sendall('HTTP/1.1 200 OK\nConnection: close\nServer: WebSocket Server\nContent-Type: text/html\n\n')
+            sock.sendall('HTTP/1.1 200 OK\nConnection: close\nServer: WebSocket Server\nContent-Type: text/html\n')
+            length = os.stat(self._page)[6]
+            sock.sendall('Content-Length: {}\n\n'.format(length))
             # Process page by lines to avoid large strings
             with open(self._page, 'r') as f:
                 for line in f:
                     sock.sendall(line)
-            sock.sendall('\n')
         except OSError:
             # Error while serving webpage
             pass
