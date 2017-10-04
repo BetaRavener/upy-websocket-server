@@ -9,6 +9,7 @@ class ClientClosedError(Exception):
 class WebSocketConnection:
     def __init__(self, addr, s, close_callback):
         self.client_close = False
+        self._need_check = False
 
         self.address = addr
         self.socket = s
@@ -19,14 +20,12 @@ class WebSocketConnection:
         s.setsockopt(socket.SOL_SOCKET, 20, self.notify)
 
     def notify(self, s):
-        sock_str = str(s)
-        state_str = sock_str.split(" ")[1]
-        state = int(state_str.split("=")[1])
-
-        if state == 3:
-            self.client_close = True
+        self._need_check = True
 
     def read(self):
+        if self._need_check:
+            self._check_socket_state()
+
         msg_bytes = None
         try:
             msg_bytes = self.ws.read()
@@ -42,6 +41,15 @@ class WebSocketConnection:
         try:
             self.ws.write(msg)
         except OSError:
+            self.client_close = True
+
+    def _check_socket_state(self):
+        self._need_check = False
+        sock_str = str(self.socket)
+        state_str = sock_str.split(" ")[1]
+        state = int(state_str.split("=")[1])
+
+        if state == 3:
             self.client_close = True
 
     def is_closed(self):
