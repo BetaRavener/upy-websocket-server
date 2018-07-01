@@ -1,5 +1,6 @@
 from ws_connection import ClientClosedError
-from ws_server import WebSocketServer, WebSocketClient
+from ws_server import WebSocketClient
+from ws_multiserver import WebSocketMultiServer
 
 
 class TestClient(WebSocketClient):
@@ -21,9 +22,9 @@ class TestClient(WebSocketClient):
             self.connection.close()
 
 
-class TestServer(WebSocketServer):
+class TestServer(WebSocketMultiServer):
     def __init__(self):
-        super().__init__("test.html", 2)
+        super().__init__("test.html", 10)
 
     def _make_client(self, conn):
         return TestClient(conn)

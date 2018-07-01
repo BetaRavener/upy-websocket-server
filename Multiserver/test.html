@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Client</title>
+    <link rel="stylesheet" href="test.css">
+</head>
+<body>
+
+<div>
+    <img src="one.jpg" alt="Success Story" height="200"/>
+    <img src="two.jpg" alt="Always Test" height="200"/>
+    <img src="three.jpg" alt="The Feeling" height="200"/>
+</div>
+
+Received: <br/>
+<div id="response">
+    (Received content)
+</div>
+
+
+<script>
+    window.onload = function (ev) {
+        var ws = new WebSocket("ws://" + location.hostname + ":80");
+
+        ws.onopen = function () {
+            ws.send("Hello");
+        };
+
+        ws.onmessage = function (evt) {
+            document.getElementById("response").innerHTML = evt.data;
+        };
+    };
+</script>
+</body>
+</html>
