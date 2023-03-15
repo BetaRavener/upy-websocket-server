@@ -49,7 +49,7 @@ class WebSocketConnection:
         state_str = sock_str.split(" ")[1]
         state = int(state_str.split("=")[1])
 
-        if state == 3:
+        if state == 4:
             self.client_close = True
 
     def is_closed(self):
